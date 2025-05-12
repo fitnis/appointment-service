@@ -6,33 +6,31 @@ import (
 	"github.com/fitnis/appointment-service/models"
 	"github.com/fitnis/appointment-service/services"
 	"github.com/gin-gonic/gin"
-	"github.com/google/uuid"
 )
 
-// curl -X POST -H "Content-Type: application/json" -d '{"patientId":"123","date":"2025-04-01","time":"14:00","doctor":"Dr. House"}' http://localhost:8081/appointments/schedule
-func ScheduleAppointment(c *gin.Context) {
-	var req models.AppointmentRequest
-	if err := c.ShouldBindJSON(&req); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid input"})
-		return
-	}
-	id := uuid.New().String()
-	resp := services.ScheduleAppointment(id, req)
-	c.JSON(http.StatusCreated, resp)
+func RegisterAppointmentRoutes(rg *gin.RouterGroup) {
+	grp := rg.Group("/appointments")
+	grp.POST("/schedule", scheduleAppointment)
+	grp.GET("/schedule", getAppointments)
+	grp.DELETE("/schedule/:appointmentId", cancelAppointment)
 }
 
-// curl http://localhost:8081/appointments/schedule
-func GetAppointments(c *gin.Context) {
+// curl -X POST -H "Content-Type: application/json" -d '{"patientId":"123","date":"2025-04-01","time":"14:00","doctor":"Dr. House"}' http://localhost:8080/api/appointments/schedule
+func scheduleAppointment(c *gin.Context) {
+	var req models.AppointmentRequest
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid"})
+		return
+	}
+	c.JSON(http.StatusCreated, services.ScheduleAppointment(req))
+}
+
+func getAppointments(c *gin.Context) {
 	c.JSON(http.StatusOK, services.GetAppointments())
 }
 
-// curl -X DELETE http://localhost:8081/appointments/schedule/abc-123
-func CancelAppointment(c *gin.Context) {
+func cancelAppointment(c *gin.Context) {
 	id := c.Param("appointmentId")
-	if id == "" {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "missing id"})
-		return
-	}
 	services.CancelAppointment(id)
 	c.Status(http.StatusNoContent)
 }

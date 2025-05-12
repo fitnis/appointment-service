@@ -10,9 +10,7 @@ func main() {
 
 	api := router.Group("/appointments")
 	{
-		api.POST("/schedule", handlers.ScheduleAppointment)
-		api.GET("/schedule", handlers.GetAppointments)
-		api.DELETE("/schedule/:appointmentId", handlers.CancelAppointment)
+		handlers.RegisterAppointmentRoutes(api)
 	}
 
 	router.Run(":8081")

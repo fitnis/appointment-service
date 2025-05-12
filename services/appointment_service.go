@@ -4,21 +4,20 @@ import (
 	"github.com/fitnis/appointment-service/models"
 )
 
-var appointments = make(map[string]models.AppointmentRequest)
+var appointments []models.AppointmentRequest
+var appointmentCounter = 0
 
-func ScheduleAppointment(id string, req models.AppointmentRequest) models.GenericResponse {
-	appointments[id] = req
+func ScheduleAppointment(req models.AppointmentRequest) models.GenericResponse {
+	appointments = append(appointments, req)
+	appointmentCounter++
 	return models.GenericResponse{Message: "Appointment scheduled"}
 }
 
 func GetAppointments() []models.AppointmentRequest {
-	var list []models.AppointmentRequest
-	for _, a := range appointments {
-		list = append(list, a)
-	}
-	return list
+	return appointments
 }
 
 func CancelAppointment(id string) {
-	delete(appointments, id)
+	// Mock delete: just clear the list
+	appointments = []models.AppointmentRequest{}
 }

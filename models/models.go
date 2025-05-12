@@ -6,7 +6,6 @@ type AppointmentRequest struct {
 	Time      string `json:"time"`
 	Doctor    string `json:"doctor"`
 }
-
 type GenericResponse struct {
 	Message string `json:"message"`
 }
